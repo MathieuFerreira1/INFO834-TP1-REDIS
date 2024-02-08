@@ -47,6 +47,5 @@ def reset_all_connections(user_ids):
         r.delete(user_id)
 
 if __name__ == "__main__":
-    # Liste des identifiants des utilisateurs
     user_id = sys.argv[1]
-    attempt_login(user_id)
+    print(attempt_login(user_id))
