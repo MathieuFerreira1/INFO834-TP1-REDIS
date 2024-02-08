@@ -23,7 +23,7 @@ Pour utiliser le projet, suivez ces étapes :
 
 1. Démarrez votre serveur PHP. Si vous utilisez WAMP, vous pouvez le démarrer à partir du panneau de contrôle de WAMP.
 2. Ouvrez votre navigateur web et naviguez jusqu'à `localhost/<répertoire_de_votre_projet>/accueil.php`.
-3. Lancer le serveur redis avec redis-server
+3. Lancer le serveur redis avec `redis-server`.
 4. Modifier le fichier login.php au niveau de la variable "$cmd" en modifiant le path de python et du script python en le mettant en brut
     (ATTENTION : bien laisser le "$userId")
 5. Utilisez l'application en naviguant dans les pages
