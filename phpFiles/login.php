@@ -40,9 +40,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             // Utilisateur trouvé, redirection vers une autre page
 //            header("Location: services.php");
-            $output = shell_exec('C:\wamp64\www\EtuServices\INFO834-TP1-REDIS\pythonFiles\main.py');
-            echo $output;
-//            exit;c
+
+            // Requête pour récupérer l'ID de l'utilisateur à partir de l'email
+            $sql2 = "SELECT id FROM utilisateurs WHERE email = '$email' AND password = '$password'";
+            $result2 = $conn->query($sql2);
+            if ($result2->num_rows > 0) {
+                // Fetch the row from the result set
+                $row = $result2->fetch_assoc();
+                // Get the user ID from the row
+                $userId = $row['id'];
+                echo $userId;
+
+                $output = shell_exec(".\pythonFiles\main.py $userId");
+                echo $output;
+            }
         } else {
             // Utilisateur non trouvé, afficher un message d'erreur
             echo "L'utilisateur n'existe pas. Veuillez vérifier vos informations de connexion.";
