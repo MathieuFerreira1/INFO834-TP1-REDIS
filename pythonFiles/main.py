@@ -33,11 +33,12 @@ def can_login(user_id):
 
 def attempt_login(user_id):
     can_login_message = can_login(user_id)
-    print(can_login_message)
+    # print(can_login_message)
 
     if can_login_message == 1:
         # Ajoutez le timestamp actuel à la liste de l'utilisateur
         r.lpush(user_id, time.time())
+    return can_login_message
 
 def reset_all_connections(user_ids):
     for user_id in user_ids:
