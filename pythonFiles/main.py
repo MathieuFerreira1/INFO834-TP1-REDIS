@@ -38,9 +38,6 @@ def attempt_login(user_id):
     if can_login_message == 1:
         # Ajoutez le timestamp actuel à la liste de l'utilisateur
         r.lpush(user_id, time.time())
-        return True
-    else:
-        return False
 
 def reset_all_connections(user_ids):
     for user_id in user_ids:
