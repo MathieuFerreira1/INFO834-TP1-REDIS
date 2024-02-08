@@ -35,7 +35,7 @@ def attempt_login(user_id):
     can_login_message = can_login(user_id)
     print(can_login_message)
 
-    if 1 in can_login_message:
+    if can_login_message == 1:
         # Ajoutez le timestamp actuel à la liste de l'utilisateur
         r.lpush(user_id, time.time())
         return True
