@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-// Requête pour vérifier si l'utilisateur existe
+    // Requête pour vérifier si l'utilisateur existe
     $sql = "SELECT * FROM utilisateurs WHERE email = '$email' AND password = '$password'";
     $result = $conn->query($sql);
 
@@ -39,27 +39,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         // Vérifier s'il y a des résultats
         if ($result->num_rows > 0) {
-            // Utilisateur trouvé, redirection vers une autre page
-//            header("Location: services.php");
-
             // Requête pour récupérer l'ID de l'utilisateur à partir de l'email
             $sql2 = "SELECT id FROM utilisateurs WHERE email = '$email' AND password = '$password'";
             $result2 = $conn->query($sql2);
             if ($result2->num_rows > 0) {
-                // Fetch the row from the result set
+                // Récupérer la ligne de résultat
                 $row = $result2->fetch_assoc();
-                // Get the user ID from the row
+                // Récupérer l'ID de l'utilisateur
                 $userId = $row['id'];
-                // Convert the user ID to string
+                // Convertir l'ID en chaîne de caractères
                 $userId = strval($userId);
-//                echo $userId;
 
+                // Exécuter le script Python pour vérifier si l'utilisateur peut se connecter
                 $cmd = "C:\Users\Mathieu\AppData\Local\Programs\Python\Python311\python.exe C:\wamp64\www\EtuServices\INFO834-TP1-REDIS\pythonFiles\main.py $userId";
-
                 $command = escapeshellcmd($cmd);
-
                 $shelloutput = shell_exec($command);
-//                var_dump($shelloutput);
+
+                // Rediriger l'utilisateur vers la page de services si la connexion est réussie
                 if ($shelloutput == "1") {
                     header("Location: services.php");
                 } else {
