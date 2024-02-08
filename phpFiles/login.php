@@ -49,10 +49,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $row = $result2->fetch_assoc();
                 // Get the user ID from the row
                 $userId = $row['id'];
-                echo $userId;
+                // Convert the user ID to string
+                $userId = strval($userId);
+//                echo $userId;
 
-                $output = shell_exec(".\pythonFiles\main.py $userId");
-                echo $output;
+                $cmd = "C:\Users\Mathieu\AppData\Local\Programs\Python\Python311\python.exe C:\wamp64\www\EtuServices\INFO834-TP1-REDIS\pythonFiles\main.py $userId";
+
+                $command = escapeshellcmd($cmd);
+
+                $shelloutput = shell_exec($command);
+//                var_dump($shelloutput);
+                if ($shelloutput == "1") {
+                    header("Location: services.php");
+                } else {
+                    echo "La connexion est impossible, vous vous êtes connecté plus de 10 fois dans les 10 dernières minutes.";
+                }
+
+
             }
         } else {
             // Utilisateur non trouvé, afficher un message d'erreur
