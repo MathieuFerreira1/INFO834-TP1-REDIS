@@ -27,9 +27,9 @@ def can_login(user_id):
 
     if len(recent_connections) < 10:
         # L'utilisateur peut se connecter
-        return "La connexion est possible."
+        return 1
     else:
-        return "La connexion est impossible, vous vous êtes connecté plus de 10 fois dans les 10 dernières minutes."
+        return 0
 
 def attempt_login(user_id):
     can_login_message = can_login(user_id)
