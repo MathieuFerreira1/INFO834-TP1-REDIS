@@ -1,30 +1,49 @@
+import sys
+import time
 import redis
 
-# Connexion à Redis
-redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+# Créer une connexion au serveur Redis
+r = redis.Redis(host='localhost', port=6379, db=0)
 
-# Fonction pour vérifier si l'utilisateur est autorisé à se connecter
-def verifier_autorisation_utilisateur(utilisateur_id):
-    # Vérifier si l'utilisateur est enregistré dans Redis
-    if redis_client.exists(utilisateur_id):
-        # Vérifier le nombre de connexions récentes de l'utilisateur
-        nb_connexions_recentes = int(redis_client.get(utilisateur_id))
-        # Vérifier si l'utilisateur a dépassé le nombre maximal de connexions
-        if nb_connexions_recentes >= 10:
-            return False
-    # Si l'utilisateur n'est pas enregistré ou n'a pas dépassé le nombre maximal de connexions
-    return True
+def can_login(user_id):
+    # Obtenez le timestamp actuel
+    now = time.time()
 
-# Fonction pour enregistrer une connexion d'utilisateur
-def enregistrer_connexion_utilisateur(utilisateur_id):
-    # Incrémenter le nombre de connexions de l'utilisateur dans Redis
-    redis_client.incr(utilisateur_id)
+    # Récupérez toutes les connexions de l'utilisateur
+    connections = r.lrange(user_id, 0, -1)
 
-# Exemple d'utilisation :
-if __name__ == "__main__":
-    utilisateur_id = input("Entrez l'identifiant de l'utilisateur : ")
-    if verifier_autorisation_utilisateur(utilisateur_id):
-        print("L'utilisateur est autorisé à se connecter.")
-        enregistrer_connexion_utilisateur(utilisateur_id)
+    # Initialiser une nouvelle liste vide
+    recent_connections = []
+
+    # Parcourir chaque 'conn' dans 'connections'
+    for conn in connections:
+        # Convertir 'conn' en flottant et soustraire le résultat de 'now'
+        time_difference = now - float(conn)
+
+        # Vérifier si le résultat est inférieur ou égal à 600
+        if time_difference <= 600:
+            # Si la condition est vraie, ajouter 'conn' à 'recent_connections'
+            recent_connections.append(conn)
+
+    if len(recent_connections) < 10:
+        # L'utilisateur peut se connecter
+        return "La connexion est possible."
     else:
-        print("L'utilisateur a dépassé le nombre maximal de connexions.")
+        return "La connexion est impossible, vous vous êtes connecté plus de 10 fois dans les 10 dernières minutes."
+
+def attempt_login(user_id):
+    can_login_message = can_login(user_id)
+    print(can_login_message)
+
+    if "possible" in can_login_message:
+        # Ajoutez le timestamp actuel à la liste de l'utilisateur
+        r.lpush(user_id, time.time())
+
+def reset_all_connections(user_ids):
+    for user_id in user_ids:
+        r.delete(user_id)
+
+if __name__ == "__main__":
+    # Liste des identifiants des utilisateurs
+    user_id = sys.argv[1]
+    attempt_login(user_id)
